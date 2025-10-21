@@ -1,5 +1,6 @@
-import { auth } from "../../firebaseConfig"
+import { auth, db } from "../../firebaseConfig"
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const signIn = async ({ email, password, setLoading, router, setEmail, setPassword }) => {
     if (!email || !password) {
@@ -8,11 +9,29 @@ const signIn = async ({ email, password, setLoading, router, setEmail, setPasswo
     }
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // Clear form fields after successful sign in
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Sprawdź, czy użytkownik ma wybraną kategorię
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        
+        if (userData.category) {
+          // Użytkownik ma kategorię - idź do Settings
+          router.push("/Settings");
+        } else {
+          // Użytkownik nie ma kategorii - pokaż ekran wyboru
+          router.push("/GreetingScreen");
+        }
+      } else {
+        router.push("/GreetingScreen");
+      }
+      
       setEmail("");
       setPassword("");
-      router.push("/GreetingScreen");
     } catch (error) {
       alert(error.message);
     } finally {

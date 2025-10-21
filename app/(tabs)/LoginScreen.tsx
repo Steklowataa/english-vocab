@@ -7,15 +7,13 @@ import signUp from "../components/signUp";
 import signIn from "../components/signIn";
 import { BlurView } from 'expo-blur';
 import { useFonts } from 'expo-font'
+import {DEV_MODE, DEV_EMAIL, DEV_PASSWORD, DEFAULT_PASSWORD} from "../components/loginData"
 
-
-
-const DEFAULT_PASSWORD = "123456"
 
 export default function Index() {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(DEV_MODE ? DEV_EMAIL : "");
+  const [password, setPassword] = useState(DEV_MODE ? DEV_PASSWORD : "");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isSignUp, setIsSignUp] = useState(false);

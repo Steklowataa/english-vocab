@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet, ImageBackground, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, SafeAreaView, Platform} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useState, useEffect } from "react";
 import { useFonts } from 'expo-font';
-// import CategoryScreen from "./CategoryScreen";
+import CategoryScreen from "./CategoryScreen";
 import { useRouter } from "expo-router";
 import {auth, db} from "../../firebaseConfig"
 import { doc, getDoc} from "firebase/firestore";
@@ -60,7 +59,7 @@ export default function GreetingScreen() {
             <Text style={styles.text}>Witam, {name}!</Text>
             <Text style={styles.textHeader2}>Z jakich kategorii</Text>
             <Text style={styles.textHeader2}>chcesz zacząć?</Text>
-            {/* <CategoryScreen /> */}
+            <CategoryScreen />
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
