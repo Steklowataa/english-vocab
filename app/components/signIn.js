@@ -21,7 +21,7 @@ const signIn = async ({ email, password, setLoading, router, setEmail, setPasswo
         
         if (userData.category) {
           // Użytkownik ma kategorię - idź do Settings
-          router.push("/Settings");
+          router.push("/WordCard");
         } else {
           // Użytkownik nie ma kategorii - pokaż ekran wyboru
           router.push("/GreetingScreen");
