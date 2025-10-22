@@ -17,10 +17,10 @@ const signUp = async ({ setLoading, setName, setEmail, router, name, email, pass
         uid: userCredential.user.uid,
         name: name,
         email: email,
+        category: null,
         createdAt: new Date()
       });
       
-    //   alert("Account created successfully!");
       router.push("/GreetingScreen");
       setName("");
       setEmail("");
