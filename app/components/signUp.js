@@ -1,8 +1,6 @@
 import { auth, db } from "../../firebaseConfig"
-import { collection, setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, } from 'firebase/auth';
-
-
 
 const signUp = async ({ setLoading, setName, setEmail, router, name, email, password }) => {
     if (!name || !email) {
@@ -17,8 +15,23 @@ const signUp = async ({ setLoading, setName, setEmail, router, name, email, pass
         uid: userCredential.user.uid,
         name: name,
         email: email,
+
         category: null,
-        createdAt: new Date()
+        wordsPerDay: 0,
+        notificationStartTime: null,
+        notificationEndTime: null,
+        silentStartTime: null,
+        silentEndTime: null,
+        selectedDays: [],
+        
+        totalWordsLearned: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        level: "🥉 Beginner",
+        
+        onboardingCompleted: false, 
+        createdAt: serverTimestamp(),
+        // lastActiveAt: serverTimestamp()
       });
       
       router.push("/GreetingScreen");
@@ -29,6 +42,6 @@ const signUp = async ({ setLoading, setName, setEmail, router, name, email, pass
     } finally {
       setLoading(false);
     }
-  };
+};
 
 export default signUp;
