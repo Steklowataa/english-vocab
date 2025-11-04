@@ -1,50 +1,136 @@
-# Welcome to your Expo app 👋
+# 🇬🇧 English IT Learning App 
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, interactive web application designed to help users learn **English vocabulary related to IT and professional work environments**.  
+The app combines **daily notifications**, **flashcards**, and **adaptive testing** to make learning efficient and engaging.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Features
 
-   ```bash
-   npm install
-   ```
+### 🗂️ Categories
+- Users can select **one learning category** at a time (e.g., *IT English*).  
+- After completing a category, the next one can be unlocked.  
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+### 🔔 Daily Notifications
+- Daily notifications send **a word and its translation** at selected hours.  
+- Users can choose how many words to receive each day: **5, 10, or 15**.  
+- Add **quiet hours** (e.g., at night) when no notifications are sent.  
+- Notifications also appear inside the app as **flashcards** with:
+  - the word 🗣️  
+  - its translation 🌍  
+  - example sentences 💬  
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 🧠 Daily Test
+- At the end of each day, users receive a **notification** inviting them to take a **daily test**.  
+- The test can be **skipped** or **postponed** to the next day.  
+- Tests open directly in the app.  
+- Two types of tests:
+  1. **Multiple choice (A, B, C, D)**  
+  2. **Write the translation manually**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+#### 🏁 Test Results
+- After finishing, users see:
+  - Which questions were correct ✅  
+  - Correct answers for mistakes ❌  
+- Tests can be repeated **unlimited times**.  
+- Each new test includes words from **previous days** for better retention.
 
-## Get a fresh project
+---
 
-When you're ready, run:
+### 📈 Progress Tracking
+- The app tracks:
+  - **Daily progress:** e.g., `13 / 20 words remembered`  
+  - **Category progress:** e.g., `123 / 1000 words (24%)`  
+  - **Overall progress:** total words learned  
 
-```bash
-npm run reset-project
-```
+#### 🏅 Levels
+| Level | Words Range | Emoji |
+|:------|:-------------|:------|
+| 🥉 Beginner | 0–50 | 🥉 |
+| 🥈 Intermediate | 51–150 | 🥈 |
+| 🥇 Advanced | 151–300 | 🥇 |
+| 💎 Expert | 301–500 | 💎 |
+| 👑 Master | 501+ | 👑 |
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+### 🔁 Smart Repetition Algorithm
+The app automatically reminds users to review words based on their difficulty:
 
-To learn more about developing your project with Expo, look at the following resources:
+| Difficulty | Accuracy | Next Review |
+|:------------|:----------|:-------------|
+| 🟢 Easy | 100% | After 30 days |
+| 🟡 Medium | 70–99% | After 7 days |
+| 🔴 Hard | <70% | After 1 day |
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+This ensures optimal long-term memory retention.
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 🧩 UI Flow (Figma Prototype)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 1️⃣ Loading Page
+- Displays logo or animation while the app initializes.
+
+### 2️⃣ User Setup
+- Enter your name → click **Next**.  
+
+### 3️⃣ Welcome Page
+- Welcome message 👋  
+- Choose a learning category → click **Next**.  
+
+### 4️⃣ Daily Settings
+- Choose **number of words per day** (slider interaction).  
+- Set **notification hours**.  
+- Optionally define **quiet hours**.  
+
+### 5️⃣ Start Day
+- Choose when to start learning: **Today** or **Tomorrow**.  
+
+### 6️⃣ Flashcards View
+- Card shows **word + translation**, and **example usage**.  
+- Swipe left/right between words.  
+- Return to previous words at any time.  
+
+### 7️⃣ Test Mode
+- Choose test type:
+  - **A/B/C/D quiz**
+  - **Type the translation**
+
+#### Multiple Choice (A–D)
+- One card per word  
+- 4 options + "Select" button next to each  
+- Button **Next →** to proceed  
+
+#### Type the Translation
+- Word displayed on card  
+- User types translation into input field  
+- Button **Next →** to continue  
+
+---
+
+## 🧭 Tech Stack
+*(adjust depending on your actual stack)*  
+- **Framework:** React / Next.js  
+- **UI:** TailwindCSS, shadcn/ui  
+- **State management:** Zustand / Redux  
+- **Notifications:** Web Push API / Firebase  
+- **Routing:** React Router / Next Navigation  
+- **Design:** Figma  
+
+---
+
+## 📊 Future Enhancements
+- 📱 Mobile app version (React Native)  
+- 🗃️ User dictionary to save favorite words  
+- 🔄 Sync progress across devices  
+- 🌐 Multi-language support  
+
+---
+
+## 💡 Example Progress Overview
+
