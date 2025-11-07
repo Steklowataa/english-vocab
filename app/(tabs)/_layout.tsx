@@ -7,6 +7,7 @@ export default function RootLayout() {
     <Stack.Screen name="GreetingScreen" options={{headerShown: false}} />
     <Stack.Screen name="Settings" options={{headerShown: false}} />
     <Stack.Screen name="FinishSettings" options={{headerShown: false}} />
+    <Stack.Screen name="WordCard" options={{headerShown: false}} />
   </Stack>
   )
 }

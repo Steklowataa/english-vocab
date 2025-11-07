@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Alert, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import WordsContainer from "./FinishSettings/WordsContainer";
@@ -94,7 +94,7 @@ export default function FinishSettings() {
         
         if (result.success) {
             console.log("✅ Profile completed, navigating to WordCard");
-            router.push('/(tabs)/WordCard');
+            router.push('./(tabs)/WordCard');
         } else {
             Alert.alert("Error", result.error || "Failed to save settings");
         }

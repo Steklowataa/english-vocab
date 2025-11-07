@@ -43,8 +43,8 @@ export const completeUserProfile = async (userId, settings) => {
 
 async function getTotalWordsInCategory(categoryName) {
   try {
-    const wordsRef = collection(db, "words");
-    const q = query(wordsRef, where("category", "==", categoryName));
+    const wordsRef = collection(db, "word"); 
+    const q = query(wordsRef, where("categoryName", "==", categoryName));
     
     const snapshot = await getCountFromServer(q);
     const count = snapshot.data().count;
