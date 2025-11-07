@@ -1,10 +1,38 @@
 import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, limit, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
+export const getSessionWords = async (session) => {
+  try {
+    if (!session || !session.wordIds || session.wordIds.length === 0) {
+      return [];
+    }
+
+    // CHANGED: "words" → "word"
+    const wordsRef = collection(db, "word");
+    const words = [];
+
+    for (const wordId of session.wordIds) {
+      const wordDoc = await getDoc(doc(db, "word", wordId));
+      if (wordDoc.exists()) {
+        words.push({
+          id: wordDoc.id,
+          ...wordDoc.data()
+        });
+      }
+    }
+
+    console.log(`✅ Fetched ${words.length} words for session`);
+    return words;
+
+  } catch (error) {
+    console.error("Error fetching session words:", error);
+    return [];
+  }
+};
 
 export const getTodaysSession = async (userId) => {
   try {
-    const today = new Date().toISOString().split('T')[0]; // "2025-10-30"
+    const today = new Date().toISOString().split('T')[0];
     const sessionId = `${userId}_${today}`;
     const sessionRef = doc(db, "dailySessions", sessionId);
     
@@ -15,7 +43,6 @@ export const getTodaysSession = async (userId) => {
       return { success: true, session: sessionDoc.data(), sessionId };
     }
     
-
     console.log("🆕 Creating new session for today");
     const newSession = await createTodaysSession(userId, sessionId);
     return { success: true, session: newSession, sessionId };
@@ -25,7 +52,6 @@ export const getTodaysSession = async (userId) => {
     return { success: false, error: error.message };
   }
 };
-
 
 async function createTodaysSession(userId, sessionId) {
   try {
@@ -37,12 +63,16 @@ async function createTodaysSession(userId, sessionId) {
     }
     
     const userData = userDoc.data();
-    const category = userData.category;
+    const userCategory = userData.category; // This is "IT" from user
     const wordsPerDay = userData.wordsPerDay || 10;
     
-    console.log(`Fetching ${wordsPerDay} words for category: ${category}`);
+    // 🔥 NEW: Get the full category name from category collection
+    const fullCategoryName = await getFullCategoryName(userCategory);
     
-    const todaysWords = await selectTodaysWords(userId, category, wordsPerDay);
+    console.log(`User category: "${userCategory}" → Full name: "${fullCategoryName}"`);
+    console.log(`Fetching ${wordsPerDay} words for category: ${fullCategoryName}`);
+    
+    const todaysWords = await selectTodaysWords(userId, fullCategoryName, wordsPerDay);
     
     if (todaysWords.length === 0) {
       throw new Error("No words available for this category");
@@ -53,7 +83,7 @@ async function createTodaysSession(userId, sessionId) {
     const sessionData = {
       userId: userId,
       date: new Date().toISOString().split('T')[0],
-      category: category,
+      category: userCategory, // Store user's category
       
       totalWords: todaysWords.length,
       completedWords: 0,
@@ -90,16 +120,39 @@ async function createTodaysSession(userId, sessionId) {
   }
 }
 
-
-async function selectTodaysWords(userId, category, wordsPerDay) {
+// 🆕 NEW FUNCTION: Get full category name from category collection
+async function getFullCategoryName(shortName) {
   try {
-    const reviewWords = await getReviewWords(userId, category);
+    const categoryRef = collection(db, "category");
+    const q = query(categoryRef, where("name", "==", shortName), limit(1));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const categoryDoc = snapshot.docs[0];
+      const fullName = categoryDoc.data().name;
+      console.log(`✅ Found category: ${shortName} → ${fullName}`);
+      return fullName;
+    }
+    
+    // If not found, try exact match (maybe it's already the full name)
+    console.log(`⚠️ Category "${shortName}" not found in category collection, using as-is`);
+    return shortName;
+    
+  } catch (error) {
+    console.error("Error getting full category name:", error);
+    return shortName; // Fallback to original name
+  }
+}
+
+async function selectTodaysWords(userId, categoryName, wordsPerDay) {
+  try {
+    const reviewWords = await getReviewWords(userId, categoryName);
     console.log(`Found ${reviewWords.length} words for review`);
     
     const reviewCount = Math.min(reviewWords.length, 5);
     const newWordsNeeded = wordsPerDay - reviewCount;
     
-    const newWords = await getNewWords(userId, category, newWordsNeeded);
+    const newWords = await getNewWords(userId, categoryName, newWordsNeeded);
     console.log(`Found ${newWords.length} new words`);
     
     const allWords = [...reviewWords.slice(0, reviewCount), ...newWords];
@@ -112,7 +165,7 @@ async function selectTodaysWords(userId, category, wordsPerDay) {
   }
 }
 
-async function getReviewWords(userId, category) {
+async function getReviewWords(userId, categoryName) {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -121,7 +174,7 @@ async function getReviewWords(userId, category) {
     const q = query(
       userWordsRef,
       where("userId", "==", userId),
-      where("category", "==", category),
+      where("category", "==", categoryName),
       where("nextReviewDate", "<=", today),
       where("status", "!=", "mastered"),
       limit(5)
@@ -139,14 +192,13 @@ async function getReviewWords(userId, category) {
   }
 }
 
-
-async function getNewWords(userId, category, count) {
+async function getNewWords(userId, categoryName, count) {
   try {
     const userWordsRef = collection(db, "userWords");
     const userWordsQuery = query(
       userWordsRef,
       where("userId", "==", userId),
-      where("category", "==", category)
+      where("category", "==", categoryName)
     );
     
     const userWordsSnapshot = await getDocs(userWordsQuery);
@@ -154,14 +206,18 @@ async function getNewWords(userId, category, count) {
     
     console.log(`User has learned ${learnedWordIds.length} words already`);
     
-    const wordsRef = collection(db, "words");
+    // CHANGED: "words" → "word"
+    const wordsRef = collection(db, "word");
     const wordsQuery = query(
       wordsRef,
-      where("category", "==", category),
+      where("categoryName", "==", categoryName), // Use categoryName field
       limit(count + learnedWordIds.length + 50)
     );
     
     const wordsSnapshot = await getDocs(wordsQuery);
+    
+    console.log(`Found ${wordsSnapshot.size} words with categoryName: ${categoryName}`);
+    
     const newWords = wordsSnapshot.docs
       .filter(doc => !learnedWordIds.includes(doc.id))
       .slice(0, count)
@@ -178,7 +234,6 @@ async function getNewWords(userId, category, count) {
   }
 }
 
-
 function shuffleArray(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -187,7 +242,6 @@ function shuffleArray(array) {
   }
   return shuffled;
 }
-
 
 export const markWordAsViewed = async (sessionId, wordId) => {
   try {
