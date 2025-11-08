@@ -6,8 +6,6 @@ export const getSessionWords = async (session) => {
     if (!session || !session.wordIds || session.wordIds.length === 0) {
       return [];
     }
-
-    // CHANGED: "words" → "word"
     const wordsRef = collection(db, "word");
     const words = [];
 
@@ -63,10 +61,9 @@ async function createTodaysSession(userId, sessionId) {
     }
     
     const userData = userDoc.data();
-    const userCategory = userData.category; // This is "IT" from user
+    const userCategory = userData.category; 
     const wordsPerDay = userData.wordsPerDay || 10;
     
-    // 🔥 NEW: Get the full category name from category collection
     const fullCategoryName = await getFullCategoryName(userCategory);
     
     console.log(`User category: "${userCategory}" → Full name: "${fullCategoryName}"`);
@@ -83,7 +80,7 @@ async function createTodaysSession(userId, sessionId) {
     const sessionData = {
       userId: userId,
       date: new Date().toISOString().split('T')[0],
-      category: userCategory, // Store user's category
+      category: userCategory,
       
       totalWords: todaysWords.length,
       completedWords: 0,
@@ -120,7 +117,6 @@ async function createTodaysSession(userId, sessionId) {
   }
 }
 
-// 🆕 NEW FUNCTION: Get full category name from category collection
 async function getFullCategoryName(shortName) {
   try {
     const categoryRef = collection(db, "category");
@@ -133,14 +129,13 @@ async function getFullCategoryName(shortName) {
       console.log(`✅ Found category: ${shortName} → ${fullName}`);
       return fullName;
     }
-    
-    // If not found, try exact match (maybe it's already the full name)
+  
     console.log(`⚠️ Category "${shortName}" not found in category collection, using as-is`);
     return shortName;
     
   } catch (error) {
     console.error("Error getting full category name:", error);
-    return shortName; // Fallback to original name
+    return shortName;
   }
 }
 
@@ -206,11 +201,10 @@ async function getNewWords(userId, categoryName, count) {
     
     console.log(`User has learned ${learnedWordIds.length} words already`);
     
-    // CHANGED: "words" → "word"
     const wordsRef = collection(db, "word");
     const wordsQuery = query(
       wordsRef,
-      where("categoryName", "==", categoryName), // Use categoryName field
+      where("categoryName", "==", categoryName), 
       limit(count + learnedWordIds.length + 50)
     );
     
