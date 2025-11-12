@@ -6,13 +6,15 @@ import {BlurView} from 'expo-blur';
 export default function ButtonNavigation({ currentIndex, words, handlePrevious, handleNext }) {
     return (
         <View style={styles.navigation}>
-            <TouchableOpacity 
-                style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
-                onPress={handlePrevious}
-                disabled={currentIndex === 0}>
-                <Ionicons name="chevron-back" size={24} color={currentIndex === 0 ? "#8E8D8D" : "#fff"} />
-                <Text style={[styles.navText, currentIndex === 0 && styles.navTextDisabled]}>Previous</Text>
-            </TouchableOpacity>
+            <BlurView intensity={25} tint="light" style={styles.blurContainer1}>
+                <TouchableOpacity 
+                    style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
+                    onPress={handlePrevious}
+                    disabled={currentIndex === 0}>
+                    <Ionicons name="chevron-back" size={24} color={currentIndex === 0 ? "#8E8D8D" : "#fff"} />
+                    <Text style={[styles.navText, currentIndex === 0 && styles.navTextDisabled]}>Previous</Text>
+                </TouchableOpacity>
+            </BlurView>
 
             <BlurView intensity={25} tint="light" style={styles.blurContainer}>
                 <TouchableOpacity 
@@ -48,7 +50,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: "solid"
   },
-  
+  blurContainer1: {
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: 'rgba(142, 141, 141, 0.6)',
+    borderColor: "rgba(142, 141, 141, 1)",
+    borderWidth: 2,
+    borderStyle: "solid"
+  },
+
   navButtonDisabled: {
     backgroundColor: "#2C2C2C",
   },

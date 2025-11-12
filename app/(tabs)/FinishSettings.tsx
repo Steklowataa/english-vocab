@@ -94,7 +94,7 @@ export default function FinishSettings() {
         
         if (result.success) {
             console.log("✅ Profile completed, navigating to WordCard");
-            router.push('./(tabs)/WordCard');
+            router.push('./(tabs)/Dashboard');
         } else {
             Alert.alert("Error", result.error || "Failed to save settings");
         }
