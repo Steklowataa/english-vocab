@@ -20,8 +20,7 @@ const signIn = async ({ email, password, setLoading, router, setEmail, setPasswo
         const userData = userDoc.data();
         
         if (userData.category) {
-          // Użytkownik ma kategorię - idź do Settings
-          router.push("/WordCard");
+          router.push("/Dashboard");
         } else {
           // Użytkownik nie ma kategorii - pokaż ekran wyboru
           router.push("/GreetingScreen");
