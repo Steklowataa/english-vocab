@@ -6,9 +6,9 @@ export default function RootLayout() {
     <Stack.Screen name="LoginScreen" options={{headerShown: false}} />
     <Stack.Screen name="GreetingScreen" options={{headerShown: false}} />
     <Stack.Screen name="Settings" options={{headerShown: false}} />
+    <Stack.Screen name="EditSettings" options={{headerShown: false}} />
     <Stack.Screen name="FinishSettings" options={{headerShown: false}} />
     <Stack.Screen name="WordCard" options={{headerShown: false}} />
-    <Stack.Screen name="WordCardScreen" options={{headerShown: false}} />
     <Stack.Screen name="Dashboard" options={{headerShown: false}} />
   </Stack>
   )
