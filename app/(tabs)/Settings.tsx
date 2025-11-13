@@ -1,9 +1,8 @@
 import ChooseDay from "../components/ChooseDay"
 import SliderWords from "../components/Slider"
 import { useFonts } from "expo-font"
-import { StyleSheet, Text, View, StatusBar, ScrollView, Platform } from "react-native"
+import { StyleSheet, Text, View, StatusBar, ScrollView, Platform, ActivityIndicator } from "react-native"
 import NotificationTimePicker from "../components/NotificationTimePicker"
-import { useState } from "react"
 import { ImageBackground } from "react-native"
 import NotificationEnd from "../components/NotificationEnd"
 import Button from "../components/Button"
@@ -14,20 +13,29 @@ export default function Settings() {
         "KodchasanRegular": require("../../assets/fonts/Kodchasan-Regular.ttf"),
         "KodchasanSemiBold": require("../../assets/fonts/Kodchasan-SemiBold.ttf"),
     })
-    const [notifStart, setNotifStart] = useState<Date>(new Date(0, 0, 0, 12, 0));
-    const [notifEnd, setNotifEnd] = useState<Date>(new Date(0, 0, 0, 21, 0));
-    const router = useRouter()
+    const router = useRouter();
     
-    const onNext = async() => {
-        router.push('/(tabs)/FinishSettings')
-        console.log("clicked")
+    const onNext = () => {
+        router.push('/(tabs)/FinishSettings');
+    }
+
+    if (!fontsLoading) {
+        return (
+            <View style={[style.wrapper, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ImageBackground
+                    source={require('../../assets/app-images/background.png')}
+                    style={style.backgroundImage}
+                    resizeMode="cover"
+                />
+                <ActivityIndicator size="large" color="#fff" />
+            </View>
+        )
     }
         
     return (
         <View style={style.wrapper}>
             <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
             
-            {/* Tło jako warstwa pod spodem */}
             <ImageBackground
                 source={require('../../assets/app-images/background.png')}
                 style={style.backgroundImage}

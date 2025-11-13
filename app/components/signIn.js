@@ -22,7 +22,6 @@ const signIn = async ({ email, password, setLoading, router, setEmail, setPasswo
         if (userData.category) {
           router.push("/Dashboard");
         } else {
-          // Użytkownik nie ma kategorii - pokaż ekran wyboru
           router.push("/GreetingScreen");
         }
       } else {

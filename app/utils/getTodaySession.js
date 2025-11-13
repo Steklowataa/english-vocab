@@ -64,12 +64,10 @@ async function createTodaysSession(userId, sessionId) {
     const userCategory = userData.category; 
     const wordsPerDay = userData.wordsPerDay || 10;
     
-    const fullCategoryName = await getFullCategoryName(userCategory);
+    console.log(`User category: "${userCategory}"`);
+    console.log(`Fetching ${wordsPerDay} words for category: ${userCategory}`);
     
-    console.log(`User category: "${userCategory}" → Full name: "${fullCategoryName}"`);
-    console.log(`Fetching ${wordsPerDay} words for category: ${fullCategoryName}`);
-    
-    const todaysWords = await selectTodaysWords(userId, fullCategoryName, wordsPerDay);
+    const todaysWords = await selectTodaysWords(userId, userCategory, wordsPerDay);
     
     if (todaysWords.length === 0) {
       throw new Error("No words available for this category");
@@ -114,28 +112,6 @@ async function createTodaysSession(userId, sessionId) {
   } catch (error) {
     console.error("Error creating today's session:", error);
     throw error;
-  }
-}
-
-async function getFullCategoryName(shortName) {
-  try {
-    const categoryRef = collection(db, "category");
-    const q = query(categoryRef, where("name", "==", shortName), limit(1));
-    const snapshot = await getDocs(q);
-    
-    if (!snapshot.empty) {
-      const categoryDoc = snapshot.docs[0];
-      const fullName = categoryDoc.data().name;
-      console.log(`✅ Found category: ${shortName} → ${fullName}`);
-      return fullName;
-    }
-  
-    console.log(`⚠️ Category "${shortName}" not found in category collection, using as-is`);
-    return shortName;
-    
-  } catch (error) {
-    console.error("Error getting full category name:", error);
-    return shortName;
   }
 }
 

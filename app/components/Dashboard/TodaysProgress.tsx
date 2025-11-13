@@ -61,10 +61,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   card: {
-    backgroundColor: 'rgba(30, 30, 30, 0.6)',
+    // backgroundColor: 'rgba(233, 211, 197, 0.2)',
+    backgroundColor: "rgba(30, 30, 30, 0.7)",
     borderRadius: 20,
     padding: 20,
-        borderColor: '#6C5CE7',
+    borderColor: 'rgba(246, 115, 33, 1)',
     borderWidth: 2,
     borderStyle: 'solid',
   },

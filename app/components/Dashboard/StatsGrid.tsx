@@ -1,34 +1,44 @@
 import {View, Text, StyleSheet} from 'react-native'
+import { BlurView} from 'expo-blur'
 
 export default function Statsgrid({ userData }: { userData: any }) {
     return (
         <>
             <View style={styles.statsGrid}>
-                <View style={styles.statCard}>
+                <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
                     <Text style={styles.statIcon}>🔥</Text>
                     <Text style={styles.statValue}>{userData?.currentStreak || 0}</Text>
                     <Text style={styles.statLabel}>Day Streak</Text>
-                </View>
-            
-                <View style={styles.statCard}>
+                </BlurView>
+                <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
                     <Text style={styles.statIcon}>📚</Text>
                     <Text style={styles.statValue}>{userData?.wordsPerDay || 0}</Text>
                     <Text style={styles.statLabel}>Words/Day</Text>
-                </View>
+                </BlurView>
             </View>
         </>
     )
 }
 
 const styles = StyleSheet.create({
-    statsGrid: {
+  blurContainer: {
+    backgroundColor: "rgba(246, 115, 33, 0.1)",
+    overflow: "hidden",
+    borderRadius: 20,
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+    borderColor: "rgba(246, 115, 33, 1)",
+    borderWidth: 2,
+
+  },
+  statsGrid: {
     flexDirection: 'row',
     gap: 15,
     marginBottom: 20,
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#1e1e1e',
     borderRadius: 15,
     padding: 20,
     alignItems: 'center',
@@ -45,6 +55,6 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: '#999',
+    color: '#d4cfcfff',
   },
 })

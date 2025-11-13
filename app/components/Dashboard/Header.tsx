@@ -3,18 +3,17 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function Header({ router, userData }: { router: any; userData: any; }) {
     return (
-              <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Hello,</Text>
-          <Text style={styles.userName}>{userData?.name || 'Learner'}</Text>
-        </View>
-        <TouchableOpacity 
-          style={styles.profileButton}
-          onPress={() => router.push('/Settings')}
-        >
+        <View style={styles.header}>
+          <View>
+            {/* <Text style={styles.greeting}>Witam,</Text> */}
+            <Text style={styles.userName}>{userData?.name || 'Learner'}</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.profileButton}
+            onPress={() => router.push('/Settings')}>
           <Ionicons name="person-circle-outline" size={40} color="#6C5CE7" />
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+        </View>
     )
 }
 
@@ -26,13 +25,15 @@ const styles = StyleSheet.create({
         marginBottom: 30,
   },
     greeting: {
-        fontSize: 16,
+        fontSize: 18,
         color: '#999',
+        fontFamily: "KodchasanRegular"
   },
     userName: {
         fontSize: 32,
         fontWeight: 'bold',
         color: '#fff',
+        fontFamily: "KodchasanSemiBold"
   },
     profileButton: {
         padding: 5,

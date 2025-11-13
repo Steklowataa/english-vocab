@@ -12,7 +12,7 @@ export default function RootScreen() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.replace("/(tabs)/GreetingScreen");
+        router.replace("/(tabs)/Dashboard");
       } else {
         router.replace("/(tabs)/LoginScreen");
       }
