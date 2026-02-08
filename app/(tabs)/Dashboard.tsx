@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router'
-import { useState, useEffect } from "react"
+import { useRouter, useFocusEffect } from 'expo-router'
+import { useState, useCallback } from "react"
 import { UserData, TodayProgress } from "../types/dashboard"
 import { auth, db } from "../../firebaseConfig"
 import { View, ScrollView, StyleSheet, ActivityIndicator, } from 'react-native'
@@ -18,12 +18,7 @@ export default function Dashboard() {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [todayProgress, setTodayProgress] = useState<TodayProgress | null>(null);
 
-    useEffect(() => {
-        loadDashboardData()
-    }, [])
-
-
-    const loadDashboardData = async (): Promise<void> => {
+    const loadDashboardData = useCallback(async (): Promise<void> => {
         try {
             const userId = auth.currentUser?.uid;
             if (!userId) return;
@@ -35,13 +30,21 @@ export default function Dashboard() {
             const sessionDoc = await getDoc(doc(db, 'dailySessions', `${userId}_${today}`));
             if (sessionDoc.exists()) {
                 setTodayProgress(sessionDoc.data() as TodayProgress);
+            } else {
+                setTodayProgress(null);
             }
         } catch (error) {
             console.error('Error loading dashboard:', error);
         } finally {
             setLoading(false);
         }
-  };
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadDashboardData();
+        }, [])
+    );
 
 
   if (loading) {
