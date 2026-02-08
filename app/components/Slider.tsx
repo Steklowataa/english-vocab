@@ -3,11 +3,14 @@ import Slider from "@react-native-community/slider";
 import { useState, useEffect } from "react";
 import { useFonts } from "expo-font";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { auth, db } from "../../firebaseConfig";
-import { doc, setDoc, getDoc } from "firebase/firestore";
 
-export default function SliderWords() {
-    const [wordsPerDay, setWordsPerDay] = useState(10);
+interface SliderWordsProps {
+    initialValue?: number;
+    isEditMode?: boolean; 
+}
+
+export default function SliderWords({ initialValue, isEditMode = false }: SliderWordsProps) {
+    const [wordsPerDay, setWordsPerDay] = useState(initialValue || 10);
     const [fontsLoading] = useFonts({
         "KodchasanRegular": require("../../assets/fonts/Kodchasan-Regular.ttf"),
     });
@@ -15,60 +18,19 @@ export default function SliderWords() {
     const STORAGE_KEY = 'wordsPerDay';
     
     useEffect(() => {
-        const loadWordsPerDay = async () => {
-            try {
-                const user = auth.currentUser;
-                if (!user) return;
-
-                const userRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userRef);
-
-                if (userDoc.exists() && userDoc.data().wordsPerDay) {
-                    const words = userDoc.data().wordsPerDay;
-                    setWordsPerDay(words);
-
-                    await AsyncStorage.setItem(STORAGE_KEY, words.toString());
-                } else {
-                    const existing = await AsyncStorage.getItem(STORAGE_KEY);
-                    if (existing) {
-                        setWordsPerDay(parseInt(existing));
-                    } else {
-                        await AsyncStorage.setItem(STORAGE_KEY, "10");
-                        const userRef = doc(db, "users", user.uid);
-                        await setDoc(userRef, { wordsPerDay: 10 }, { merge: true });
-                    }
-                }
-            } catch (e) {
-                console.warn("load words per day error", e);
-            }
-        };
-
-        loadWordsPerDay();
-    }, []);
+        if (initialValue !== undefined) {
+            setWordsPerDay(initialValue);
+        }
+    }, [initialValue]);
 
     const handleValueChange = async (value: number) => {
         setWordsPerDay(value);
         
         try {
-            const user = auth.currentUser;
-            if (!user) {
-                console.warn("No user logged in");
-                return;
+            if (isEditMode) {
+                await AsyncStorage.setItem(STORAGE_KEY, value.toString());
+                console.log("Words per day stored in AsyncStorage:", value);
             }
-
-            const userRef = doc(db, "users", user.uid);
-            await setDoc(
-                userRef,
-                {
-                    wordsPerDay: value,
-                    updatedAt: new Date()
-                },
-                { merge: true }
-            );
-
-            await AsyncStorage.setItem(STORAGE_KEY, value.toString());
-            
-            console.log("Words per day saved:", value);
         } catch (e) {
             console.error('save words per day error', e);
         }
