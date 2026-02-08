@@ -1,6 +1,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur'
+import ProgressContainer from "../WordCard/ProgressContainer"
+
 
 export default function TodaysProgress({ router, todayProgress }: { router: any; todayProgress: any }) {
   return (
@@ -11,18 +13,7 @@ export default function TodaysProgress({ router, todayProgress }: { router: any;
         {todayProgress ? (
           <>
             <View style={styles.progressBarContainer}>
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${todayProgress.progressPercentage}%` },
-                  ]}
-                />
-              </View>
-              <Text style={styles.progressText}>
-                {todayProgress.completedWords}/{todayProgress.totalWords} words •{' '}
-                {todayProgress.progressPercentage}%
-              </Text>
+              <ProgressContainer session={todayProgress} variant="dashboard" />
             </View>
 
             <TouchableOpacity
@@ -77,7 +68,7 @@ const styles = StyleSheet.create({
     fontFamily: 'KodchasanSemiBold'
   },
   progressBarContainer: {
-    marginBottom: 15,
+    marginBottom: 1,
   },
   progressBar: {
     height: 10,

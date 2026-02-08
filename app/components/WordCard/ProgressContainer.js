@@ -1,13 +1,28 @@
 import {View, Text, StyleSheet} from 'react-native'
 
 
-export default function ProgressContainer({session}) {
+export default function ProgressContainer({session, currentIndex, variant}) {
+    const total = session?.totalWords || 0;
+    let completed = currentIndex !== undefined ? (currentIndex + 1) : (session?.completedWords || 0);
+
+    if (session?.isCompleted) {
+        completed = total;
+    }
+
+    if (total === 0) {
+        completed = 0;
+    } else if (completed > total) {
+        completed = total;
+    }
+
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
     return (
-        <View style={styles.progressContainer}>
+        <View style={[styles.progressContainer, variant === 'dashboard' && { paddingTop: 10 }]}>
             <View style={styles.progressBar}>
-                <View style={[ styles.progressFill, { width: `${session.progressPercentage}%` },]}/>
+                <View style={[ styles.progressFill, { width: `${percentage}%` },]}/>
             </View>
-            <Text style={styles.progressText}>{session.completedWords}/{session.totalWords} words •{" "}{session.progressPercentage}%</Text>
+            <Text style={styles.progressText}>{completed}/{total} words •{" "}{percentage}%</Text>
         </View>
     )
 }

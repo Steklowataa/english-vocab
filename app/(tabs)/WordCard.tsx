@@ -81,7 +81,7 @@ export default function WordCardScreen() {
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
       {/* pasek */}
-      <ProgressContainer session={session}/>
+      <ProgressContainer session={session} currentIndex={currentIndex}/>
 
       {/* main paart */}
       <ScrollView
