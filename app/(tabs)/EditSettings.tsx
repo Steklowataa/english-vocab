@@ -10,7 +10,7 @@ import Button from "../components/Button"
 import { useRouter } from "expo-router"
 import { auth, db } from "../../firebaseConfig"
 import { onAuthStateChanged } from "firebase/auth"
-import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditSettings() {
@@ -62,17 +62,48 @@ export default function EditSettings() {
             const notificationStartTime = await AsyncStorage.getItem('notificationStartTime');
             const notificationEndTime = await AsyncStorage.getItem('notificationEndTime');
 
+            console.log("Read from AsyncStorage:", { wordsPerDay, notificationDays, notificationStartTime, notificationEndTime });
+
             const settingsToUpdate: any = {};
-            // Only update if a value was actually changed and stored in AsyncStorage
             if (wordsPerDay) settingsToUpdate.wordsPerDay = parseInt(wordsPerDay, 10);
             if (notificationDays) settingsToUpdate.notificationDays = JSON.parse(notificationDays);
             if (notificationStartTime) settingsToUpdate.notificationStartTime = notificationStartTime;
             if (notificationEndTime) settingsToUpdate.notificationEndTime = notificationEndTime;
 
+            console.log("Settings to update:", settingsToUpdate);
+
             if (Object.keys(settingsToUpdate).length > 0) {
+                console.log("Updating settings in Firestore...");
                 await updateDoc(doc(db, "users", user.uid), settingsToUpdate);
+                console.log("Settings updated.");
+
+                const d = new Date();
+                const year = d.getFullYear();
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const day = d.getDate().toString().padStart(2, '0');
+                const today = `${year}-${month}-${day}`;
+
+                const sessionId = `${user.uid}_${today}`;
+                console.log(`Attempting to delete session with ID: ${sessionId}`);
+                await deleteDoc(doc(db, "dailySessions", sessionId));
+                console.log(`Session deletion attempted for ID: ${sessionId}`);
+
+                await AsyncStorage.multiRemove([
+                    'wordsPerDay',
+                    'notificationDays', 
+                    'notificationStartTime',
+                    'notificationEndTime'
+                ]);
+                console.log("AsyncStorage cleared.");
+            } else {
+                console.log("No settings to update.");
             }
-            router.back();
+
+            if (router.canGoBack()) {
+                router.back();
+            } else {
+                router.push('/Settings');
+            }
 
         } catch (error) {
             console.error("Failed to save settings: ", error);
@@ -128,11 +159,13 @@ export default function EditSettings() {
                         Zmień swój plan nauki
                     </Text>
                 </View>
-                <SliderWords initialValue={Number(initialSettings.wordsPerDay ?? 10)} />
+                <SliderWords initialValue={Number(initialSettings.wordsPerDay ?? 10)} isEditMode={true} />
+                {/* <SliderWords initialValue={Number(initialSettings.wordsPerDay ?? 10)} isEditMode={true} />
+                <NotificationTimePicker initialStartTime={formatTime(initialSettings.notificationStartTime, '08:00')} />
                 <ChooseDay initialDays={Array.isArray(initialSettings.notificationDays) ? initialSettings.notificationDays : []} />
                 <View style={style.notif}>
                     <NotificationEnd initialEndTime={formatTime(initialSettings.notificationEndTime, '21:00')} />
-                </View>
+                </View> */}
                 <View style={style.btnContainer}>
                     <Button
                         title={"Zapisz"}

@@ -15,7 +15,7 @@ export default function ProgressContainer({session}) {
 const styles = StyleSheet.create({
     progressContainer: {
     paddingHorizontal: 38,
-    paddingTop: 38,
+    paddingTop: 58,
     paddingBottom: 20,
   },
   progressBar: {

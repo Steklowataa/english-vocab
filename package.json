@@ -22,7 +22,7 @@
     "@react-navigation/native": "^7.1.8",
     "@supabase/auth-js": "^2.75.1",
     "@supabase/supabase-js": "^2.75.1",
-    "expo": "54.0.19",
+    "expo": "^54.0.19",
     "expo-blur": "^15.0.7",
     "expo-build-properties": "~1.0.9",
     "expo-constants": "~18.0.9",
