@@ -77,7 +77,7 @@ export default function Dashboard() {
         <Statsgrid userData={userData} />
 
       {/* Quick Actions */}
-        <QuickAction router={router} />
+        <QuickAction router={router} todayProgress={todayProgress} />
     </ScrollView>
   );
 }

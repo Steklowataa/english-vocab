@@ -9,6 +9,7 @@ import ProgressContainer from "../components/WordCard/ProgressContainer"
 import ButtonNavigation from "../components/WordCard/ButtonNavigation"
 import { useRouter } from "expo-router"
 import Button from "../components/Button"
+import { BlurView } from "expo-blur";
 
 export default function WordCardScreen() {
   const router = useRouter();
@@ -95,6 +96,16 @@ export default function WordCardScreen() {
           isBookmarked={bookmarkedIds.includes(currentWord.id)}/>
           {currentIndex === words.length - 1 ? (
         <View style={styles.testButtonContainer}>
+          <BlurView intensity={25} tint="light" style={styles.blurContainer1}>
+            <TouchableOpacity 
+                    style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
+                    onPress={handlePrevious}
+                    disabled={currentIndex === 0}>
+                    <Ionicons name="chevron-back" size={24} color={currentIndex === 0 ? "#8E8D8D" : "#fff"} />
+                    <Text style={[styles.navText, currentIndex === 0 && styles.navTextDisabled]}>Previous</Text>
+            </TouchableOpacity>
+
+          </BlurView>
           <Button
             title="Go to test"
             onPress={() => {
@@ -158,6 +169,32 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
   },
+  blurContainer1: {
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: 'rgba(142, 141, 141, 0.6)',
+    borderColor: "rgba(142, 141, 141, 1)",
+    borderWidth: 2,
+    borderStyle: "solid"
+  },
+  navButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  navButtonDisabled: {
+    backgroundColor: "#2C2C2C",
+  },
+  navText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginHorizontal: 5,
+  },
+  navTextDisabled: {
+    color: "#8E8D8D",
+  },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
@@ -200,10 +237,33 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   testButton: {
+    borderRadius: 20
   },
   testButtonContainer: {
-    position: "relative"
+    position: "relative",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 15,
+    gap: 20
+  },
 
+  prevBtn: {
+    borderRadius: 20,
+    backgroundColor: 'rgba(142, 141, 141, 0.6)',
+    borderColor:"rgba(142, 141, 141, 1)",
+    borderWidth: 2,
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  prevBtnText: {
+    color: "#fff",
+    fontFamily: "KodchasanBold",
+    fontSize: 16,
+    marginLeft: 5,
   },
 });
 

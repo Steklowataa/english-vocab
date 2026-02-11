@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import {BlurView} from "expo-blur"
 
 
-export default function QuiclAction({ router }: { router: any }) {
+export default function QuiclAction({ router, todayProgress }: { router: any, todayProgress: any}) {
     return (
         <View style={styles.actionsContainer}>
           <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
@@ -33,6 +33,20 @@ export default function QuiclAction({ router }: { router: any }) {
               <Ionicons name="chevron-forward" size={20} color="#b3b2b2ff" />
             </TouchableOpacity>
         </BlurView>
+
+        {/* Test section */}
+        {todayProgress && (
+          <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => router.push('/Test')}>
+              <Ionicons name="person" size={24} color="#6C5CE7" />
+              <Text style={styles.actionButtonText}>Test</Text>
+              <Ionicons name="chevron-forward" size={20} color="#b3b2b2ff" />
+            </TouchableOpacity>
+        </BlurView>
+        )}
+      
       </View>
     )
 }
