@@ -10,6 +10,8 @@ import ButtonNavigation from "../components/WordCard/ButtonNavigation"
 import { useRouter } from "expo-router"
 import Button from "../components/Button"
 import { BlurView } from "expo-blur";
+import { db } from "../../firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function WordCardScreen() {
   const router = useRouter();
@@ -24,6 +26,21 @@ export default function WordCardScreen() {
     handlePrevious,
     handleBookmark,
   } = useWordSession();
+
+  const handleGoToTest = async () => {
+    if (session) {
+      try {
+        const sessionId = `${session.userId}_${session.date}`;
+        const sessionRef = doc(db, "dailySessions", sessionId);
+        await updateDoc(sessionRef, {
+          testAvailable: true,
+        });
+        router.push("/Test");
+      } catch (error) {
+        console.error("Error updating session:", error);
+      }
+    }
+  };
 
   const [fontsLoading] = useFonts({
     "KodchasanRegular": require("../../assets/fonts/Kodchasan-Regular.ttf"),
@@ -108,10 +125,7 @@ export default function WordCardScreen() {
           </BlurView>
           <Button
             title="Go to test"
-            onPress={() => {
-              handleNext();
-              router.push('/Test');
-            }}
+            onPress={handleGoToTest}
             textStyle={{fontFamily: "KodchasanSemiBold", fontSize: 16}}
             style={styles.testButton}
           />

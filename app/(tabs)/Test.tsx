@@ -1,5 +1,5 @@
-import React from "react";
-import { ImageBackground, SafeAreaView, Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { ImageBackground, SafeAreaView, Text, View, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useQuiz } from "../hooks/useQuiz";
 import { QuizOption } from "../components/QuizOption";
 import { ScreenState } from "../components/ScreenState";
@@ -17,9 +17,18 @@ export default function TestScreen() {
     selectedAnswer,
     answer,
     next,
+    isFinished,
   } = useQuiz();
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (isFinished) {
+      Alert.alert("Congratulations!", "You've completed today's session.", [
+        { text: "OK", onPress: () => router.push('/Dashboard') }
+      ]);
+    }
+  }, [isFinished, router]);
 
   if (loading) return <ScreenState />;
   if (error) return <ScreenState text={error} />;
