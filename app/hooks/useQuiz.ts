@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { auth, db } from '../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, collection, query, where, getDocs, documentId } from 'firebase/firestore';
 import { Word } from '../types/word';
 import { QuizQuestion } from '../types/quiz';
+import { doc, getDoc, collection, query, where, getDocs, documentId, runTransaction, increment, serverTimestamp } from 'firebase/firestore';
+
 
 const filterValidWords = (words: Word[]): Word[] => {
   return words.filter(w => w.word && w.translation);
@@ -14,6 +15,10 @@ export const useQuiz = () => {
   const [quiz, setQuiz] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [score, setScore] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionTotalWords, setSessionTotalWords] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
@@ -41,7 +46,7 @@ export const useQuiz = () => {
         // Pobieramy dzisiejszą sesję użytkownika
         const today = new Date().toISOString().slice(0, 10);
         const dailyQuery = query(
-          collection(db, 'dailySession'),
+          collection(db, 'dailySessions'),
           where('userId', '==', user.uid),
           where('date', '==', today)
         );
@@ -50,7 +55,10 @@ export const useQuiz = () => {
         let todayWords: Word[] = [];
         let todayWordIds: string[] = [];
         if (!dailySnapshot.empty) {
-          const dailyData = dailySnapshot.docs[0].data();
+          const dailyDoc = dailySnapshot.docs[0];
+          const dailyData = dailyDoc.data();
+          setSessionId(dailyDoc.id);
+          setSessionTotalWords(dailyData.totalWords || 0);
           todayWordIds = dailyData.wordIds || [];
 
           if (todayWordIds.length > 0) {
@@ -153,18 +161,62 @@ export const useQuiz = () => {
   const answer = (option: string) => {
     if (selectedAnswer) return;
     setSelectedAnswer(option);
+    if (option === quiz[currentIndex].correctAnswer) {
+      setScore(prev => prev + 1);
+    }
   };
 
-  const next = () => {
+  const next = async () => {
     if (currentIndex < quiz.length - 1) {
       setCurrentIndex(i => i + 1);
       setSelectedAnswer(null);
     } else {
-      setCurrentIndex(0);
-      setSelectedAnswer(null);
-      alert('Quiz finished!');
-      // Tutaj możesz np. wracać do ekranu głównego:
-      // navigation.navigate('Home');
+      setLoading(true);
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId || !sessionId) {
+          throw new Error("User or session not found to save progress.");
+        }
+
+        const userRef = doc(db, 'users', userId);
+        const sessionRef = doc(db, 'dailySessions', sessionId);
+
+        await runTransaction(db, async (transaction) => {
+          const userDoc = await transaction.get(userRef);
+          if (!userDoc.exists()) {
+            throw new Error("User document does not exist!");
+          }
+          const category = userDoc.data().category;
+          if (!category) {
+            throw new Error("User category not set!");
+          }
+
+          // 1. Update daily session
+          transaction.update(sessionRef, {
+            isCompleted: true,
+            testCompleted: true,
+            testScore: score,
+          });
+
+          // 2. Update user document
+          const categoryProgressField = `categoryProgress.${category}.wordsLearned`;
+          const categoryLastStudiedField = `categoryProgress.${category}.lastStudiedAt`;
+
+          transaction.update(userRef, {
+            totalWordsLearned: increment(sessionTotalWords),
+            [categoryProgressField]: increment(sessionTotalWords),
+            [categoryLastStudiedField]: serverTimestamp(),
+          });
+        });
+
+        setIsFinished(true);
+
+      } catch (err) {
+        console.error("Failed to save quiz results:", err);
+        setError('Failed to save quiz results.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -176,5 +228,6 @@ export const useQuiz = () => {
     selectedAnswer,
     answer,
     next,
+    isFinished,
   };
 };
