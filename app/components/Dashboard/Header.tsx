@@ -10,7 +10,7 @@ export default function Header({ router, userData }: { router: any; userData: an
           </View>
           <TouchableOpacity 
             style={styles.profileButton}
-            onPress={() => router.push('/Settings')}>
+            onPress={() => router.push({ pathname: '/Settings', params: { from: 'dashboard' } })}>
           <Ionicons name="person-circle-outline" size={40} color="#6C5CE7" />
           </TouchableOpacity>
         </View>

@@ -15,15 +15,21 @@ export default function QuiclAction({ router, todayProgress }: { router: any, to
               <Ionicons name="chevron-forward" size={20} color="#b3b2b2ff" />
             </TouchableOpacity>
           </BlurView>
+
+          {/* Ustawienia */}
+  
         <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
            <TouchableOpacity 
               style={styles.actionButton}
-              onPress={() => router.push('/EditSettings')}>
+              onPress={() => router.push({ pathname: '/Settings', params: { from: 'dashboard' } })}>
               <Ionicons name="settings" size={24} color="#6C5CE7" />
               <Text style={styles.actionButtonText}>Settings</Text>
               <Ionicons name="chevron-forward" size={20} color="#b3b2b2ff" />
             </TouchableOpacity>
         </BlurView>
+
+
+        {/* Profil*/}
         <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
             <TouchableOpacity 
               style={styles.actionButton}
