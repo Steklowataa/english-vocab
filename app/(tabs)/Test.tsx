@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { ImageBackground, SafeAreaView, Text, View, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useQuiz } from "../hooks/useQuiz";
+import { getTodaysSession } from "../utils/getTodaySession";
+import { auth } from "../../firebaseConfig";
 import { QuizOption } from "../components/QuizOption";
 import { ScreenState } from "../components/ScreenState";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { BlurView } from "expo-blur";
+import useShowScore from "../hooks/useShowScore"
 
 
 export default function TestScreen() {
@@ -22,13 +24,7 @@ export default function TestScreen() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (isFinished) {
-      Alert.alert("Congratulations!", "You've completed today's session.", [
-        { text: "OK", onPress: () => router.push('/Dashboard') }
-      ]);
-    }
-  }, [isFinished, router]);
+  useShowScore({isFinished, quizLength: quiz.length})
 
   if (loading) return <ScreenState />;
   if (error) return <ScreenState text={error} />;
@@ -62,11 +58,13 @@ export default function TestScreen() {
           ))}
         </View>
 
-        {isAnswered && (
-          <TouchableOpacity style={styles.nextButton} onPress={next}>
-            <Text style={styles.nextButtonText}>Next</Text>
-          </TouchableOpacity>
-        )}
+        <View style={styles.nextButtonWrapper}>
+          {isAnswered && (
+            <TouchableOpacity style={styles.nextButton} onPress={next}>
+              <Text style={styles.nextButtonText}>Next</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -130,11 +128,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#dc3545', // red
   },
   nextButton: {
-    marginTop: 20,
     backgroundColor: '#6C5CE7',
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,
+  },
+  nextButtonWrapper: {
+    height: 65,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   nextButtonText: {
     color: '#fff',
