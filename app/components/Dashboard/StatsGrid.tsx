@@ -1,7 +1,8 @@
 import {View, Text, StyleSheet} from 'react-native'
 import { BlurView} from 'expo-blur'
 
-export default function Statsgrid({ userData }: { userData: any }) {
+
+export default function Statsgrid({ userData }: { userData: any}) {
     return (
         <>
             <View style={styles.statsGrid}>
