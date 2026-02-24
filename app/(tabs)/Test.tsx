@@ -8,6 +8,7 @@ import { ScreenState } from "../components/ScreenState";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import useShowScore from "../hooks/useShowScore"
+import useDayStreak from "../hooks/useDayStreak"
 
 
 export default function TestScreen() {
@@ -25,6 +26,7 @@ export default function TestScreen() {
   const router = useRouter();
 
   useShowScore({isFinished, quizLength: quiz.length})
+  useDayStreak({isFinished})
 
   if (loading) return <ScreenState />;
   if (error) return <ScreenState text={error} />;
