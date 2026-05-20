@@ -1,4 +1,7 @@
 # 🇬🇧 English IT Learning App 
+<img width="438" height="739" alt="Wordcard component" src="https://github.com/user-attachments/assets/110bdd44-452c-493a-a55d-4e7f0a6b9deb" />
+<img width="388" height="719" alt="Settings screen" src="https://github.com/user-attachments/assets/d09c01de-a65e-4f3c-861f-b6bfe1c5aeed" />
+
 
 A modern, interactive web application designed to help users learn **English vocabulary related to IT and professional work environments**.  
 The app combines **daily notifications**, **flashcards**, and **adaptive testing** to make learning efficient and engaging.
