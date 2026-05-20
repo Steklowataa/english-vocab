@@ -1,28 +1,27 @@
-import { KeyboardAvoidingView, Text, TextInput, View, Button, StyleSheet, ActivityIndicator, ScrollView, ImageBackground, TouchableOpacity } from "react-native";
+import { KeyboardAvoidingView, Text, TextInput, View, StyleSheet, ActivityIndicator, ScrollView, ImageBackground, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
-import { auth } from "../../firebaseConfig"
+import { auth } from "../../firebaseConfig";
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "expo-router";
 import signUp from "../components/signUp";
 import signIn from "../components/signIn";
 import { BlurView } from 'expo-blur';
-import { useFonts } from 'expo-font'
-import {DEV_MODE, DEV_EMAIL, DEV_PASSWORD, DEFAULT_PASSWORD} from "../components/loginData"
-
+import { useFonts } from 'expo-font';
 
 export default function Index() {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState(DEV_MODE ? DEV_EMAIL : "");
-  const [password, setPassword] = useState(DEV_MODE ? DEV_PASSWORD : "");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isSignUp, setIsSignUp] = useState(false);
   const router = useRouter();
-    const [fontsLoaded] = useFonts({
-        'KodchasanMedium': require('../../assets/fonts/Kodchasan-Bold.ttf'),
-        'KodchasanRegular': require('../../assets/fonts/Kodchasan-Regular.ttf'),
-        "LaoSansPro": require('../../assets/fonts/LaoSansPro-Regular.ttf')
-    })
+
+  const [fontsLoaded] = useFonts({
+    'KodchasanMedium': require('../../assets/fonts/Kodchasan-Bold.ttf'),
+    'KodchasanRegular': require('../../assets/fonts/Kodchasan-Regular.ttf'),
+    "LaoSansPro": require('../../assets/fonts/LaoSansPro-Regular.ttf')
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -30,7 +29,6 @@ export default function Index() {
     });
     return unsubscribe;
   }, []);
-
 
   const handleSignUp = async () => {
     await signUp({ 
@@ -40,7 +38,7 @@ export default function Index() {
       router, 
       name, 
       email,
-      password: DEFAULT_PASSWORD
+      password: password // Przekazujemy prawdziwe hasło wpisane przez użytkownika
     });
   };
 
@@ -51,9 +49,9 @@ export default function Index() {
       setPassword, 
       router, 
       email, 
-      password: password || DEFAULT_PASSWORD
+      password: password // Przekazujemy prawdziwe hasło wpisane przez użytkownika
     });
-  }
+  };
 
   const switchToSignUp = () => {
     setIsSignUp(true);
@@ -82,50 +80,51 @@ export default function Index() {
               {isSignUp ? "Utwórz konto" : "Welcome Back"}
             </Text>
 
+            {/* IMIĘ - tylko przy rejestracji */}
             {isSignUp && (
-            <BlurView intensity={20} tint="light" style={style.inputBox}>
+              <BlurView intensity={20} tint="light" style={style.inputBox}>
                 <TextInput
-                    style={style.input}
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Full name"
-                    placeholderTextColor="rgba(255,255,255,0.6)"/>
-            </BlurView>
+                  style={style.input}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Full name"
+                  placeholderTextColor="rgba(255,255,255,0.6)"
+                />
+              </BlurView>
             )}
+
+            {/* EMAIL - dla logowania i rejestracji */}
             <BlurView intensity={20} tint="light" style={style.inputBox}>
-                <TextInput 
-                    placeholderTextColor="rgba(255,255,255,0.6)"
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    style={style.input}/>
+              <TextInput 
+                placeholderTextColor="rgba(255,255,255,0.6)"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                style={style.input}
+              />
             </BlurView>
 
-            {!isSignUp && (
-                <BlurView intensity={20} tint="light" style={style.inputBox}>
-                    <TextInput 
-                        style={style.input}
-                        value={password}
-                        onChangeText={setPassword}
-                        placeholder="Hasło"
-                        secureTextEntry={true}
-                        placeholderTextColor="rgba(255,255,255,0.6)"/>
-                </BlurView>
-            )}
-
-            {isSignUp && (
-              <Text style={style.passwordNote}>
-                Hasło zostanie ustawione na domyślne. Możesz je później zmienić.
-              </Text>
-            )}
+            {/* HASŁO - widoczne ZARÓWNO przy logowaniu, jak i rejestracji */}
+            <BlurView intensity={20} tint="light" style={style.inputBox}>
+              <TextInput 
+                style={style.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Hasło"
+                secureTextEntry={true}
+                autoCapitalize="none"
+                placeholderTextColor="rgba(255,255,255,0.6)"
+              />
+            </BlurView>
 
             {loading ? (
-              <ActivityIndicator size="large" color="black" />
+              <ActivityIndicator size="large" color="white" style={{ marginTop: 20 }} />
             ) : (
               <View style={style.buttonContainer}>
                 <TouchableOpacity style={style.btn} onPress={isSignUp ? handleSignUp : handleSignIn}>
-                    <Text style={style.btnText}>{isSignUp ? "Sign Up" : "Sign In"}</Text>
+                  <Text style={style.btnText}>{isSignUp ? "Sign Up" : "Sign In"}</Text>
                 </TouchableOpacity>
 
                 {!isSignUp ? (
@@ -147,30 +146,30 @@ export default function Index() {
 }
 
 const style = StyleSheet.create({
-    inputBox: {
-        borderRadius: 12,
-        overflow: 'hidden',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        backgroundColor: 'rgba(217, 217, 217, 0.2)',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
-        width: 250,
-        height: 50,
-        justifyContent: 'center',
-        marginBottom: 10,
+  inputBox: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(217, 217, 217, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    width: 250,
+    height: 50,
+    justifyContent: 'center',
+    marginBottom: 10,
   },
   container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   },
   bgImg: {
-        position: 'absolute',
-        width: '150%',
-        height: '110%',
-        right: 20,
-        bottom: 20,
+    position: 'absolute',
+    width: '150%',
+    height: '110%',
+    right: 20,
+    bottom: 20,
   },
   scrollContent: {
     flexGrow: 1,
@@ -199,13 +198,6 @@ const style = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'KodchasanRegular'
   },
-  passwordNote: {
-    fontSize: 12,
-    color: "white",
-    marginBottom: 15,
-    textAlign: "center",
-    fontFamily: "LaoSansPro"
-  },
   buttonContainer: {
     paddingTop: 20,
     gap: 10,
@@ -213,19 +205,25 @@ const style = StyleSheet.create({
     alignItems: "center"
   },
   btn: {
-    color: 'white',
-    fontSize: 16,
-    fontFamily: 'KodchasanRegular'
+    backgroundColor: 'white',
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 250,
   },
   btnText: {
-    color: "blue",
+    color: "black",
     fontSize: 18,
-    fontFamily: 'LaoSansPro'
+    fontFamily: 'LaoSansPro',
+    fontWeight: 'bold'
   },
   switchText: {
     color: "rgba(255,255,255,0.8)",
     fontSize: 14,
     fontFamily: 'LaoSansPro',
-    textDecorationLine: 'underline'
+    textDecorationLine: 'underline',
+    marginTop: 5
   }
-})
+});

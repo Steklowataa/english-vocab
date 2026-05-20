@@ -147,15 +147,14 @@ async function getReviewWords(userId, categoryName) {
       where("userId", "==", userId),
       where("category", "==", categoryName),
       where("nextReviewDate", "<=", today),
-      where("status", "!=", "mastered"),
-      limit(5)
+      limit(20)
     );
     
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
       id: doc.data().wordId,
       ...doc.data()
-    }));
+    })).filter(word => word.status !== "mastered").slice(0, 5)
     
   } catch (error) {
     console.error("Error getting review words:", error);
