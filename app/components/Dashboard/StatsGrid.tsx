@@ -8,7 +8,7 @@ export default function Statsgrid({ userData }: { userData: any}) {
             <View style={styles.statsGrid}>
                 <BlurView intensity={20} tint="dark" style={styles.blurContainer}>
                     <Text style={styles.statIcon}>🔥</Text>
-                    <Text style={styles.statValue}>{userData?.currentStreak || 0}</Text>
+                    <Text style={styles.statValue}>{userData?.ncurrentStreak || 0}</Text>
                     <Text style={styles.statLabel}>Day Streak</Text>
                 </BlurView>
                 <BlurView intensity={20} tint="dark" style={styles.blurContainer}>

@@ -22,6 +22,7 @@ export default function QuiclAction({ router, todayProgress }: { router: any, to
            <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => router.push({ pathname: '/Settings', params: { from: 'dashboard' } })}>
+                
               <Ionicons name="settings" size={24} color="#6C5CE7" />
               <Text style={styles.actionButtonText}>Settings</Text>
               <Ionicons name="chevron-forward" size={20} color="#b3b2b2ff" />
